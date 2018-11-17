@@ -13,12 +13,11 @@
     Dim strbuff As String
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        IPAddr.Text = "210.242.243.31"
+        'IPAddr.Text = "210.242.243.31"
         ip = IPAddr.Text
         AcctNo = Split(My.Computer.FileSystem.ReadAllText("D:\TS_ID\AA+BB+CC+DD.txt", System.Text.Encoding.Default), ",")
         AcctNo_max_num = UBound(AcctNo)
     End Sub
-
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
 
@@ -52,12 +51,13 @@
             ConnectStatus.Text = "登入狀態：正在連接"
             Button1.Text = "登出"
             Login()
+            CheckConnectStatus.Start()
             chklog = True
         End If
 
 
 
-        debug_log.Text = AcctNo(NowNum.Text)
+        'DebugLog.Text = AcctNo(NowNum.Text)
         Timer1.Interval = 1
         'Timer1.Start()
 
@@ -94,13 +94,45 @@
         If sock1.Connected = True Then
             sock1.Client.Send(pack)
         End If
-        CheckConnectStatus.Start()
-        'Timer3.Start()
+    End Sub
+
+    Sub ReLogin()
+        If sock1.Connected = False Then
+            sock1.Connect(ip, 6414)
+            sock1.NoDelay = True
+        End If
+
+        Dim pack() As Byte
+        Dim tmp, length, country, version, id, password As String
+        Dim password_tmp() As Char
+        Dim i As Integer
+
+        country = Buwei(Hex(Asc(VersionRegion.Text.Substring(0, 1))), 2) & Buwei(Hex(Asc(VersionRegion.Text.Substring(1, 1))), 2)
+        version = Buwei(Hex(VersionNum.Text), 4)
+        id = Buwei(Hex(Val(AcctNo(NowNum.Text))), 8)
+        opassword = TSPassWord.Text
+        password_tmp = opassword.ToCharArray
+        password = ""
+        For i = 0 To password_tmp.GetUpperBound(0)
+            password &= Buwei(Hex(Asc(password_tmp(i))), 2)
+        Next
+        NowLoginID.Text = "登入帳號 : " & AcctNo(NowNum.Text)
+        length = Buwei(Hex(Len(password) \ 2 + 10), 4)
+        tmp = "59E9ACADAD59E9" & length & "AC" & Buwei(Hex(Len(password) \ 2), 2) & id & country & version & password
+        ReDim pack(Len(tmp) \ 2 - 1)
+        For i = 0 To Len(tmp) \ 2 - 1
+            pack(i) = Val("&h" & Mid(tmp, 1 + i * 2, 2))
+        Next
+        If sock1.Connected = True Then
+            sock1.Client.Send(pack)
+        End If
     End Sub
 
     Private Sub CheckConnectStatus_Tick(sender As Object, e As EventArgs) Handles CheckConnectStatus.Tick
-        If sock1.Connected = True AndAlso chklog = True Then
-            If sock1.Client.Available = 0 Then Exit Sub
+        If sock1.Connected = True Then
+            If sock1.Client.Available = 0 Then
+                Exit Sub
+            End If
             Dim tmp() As Byte, data As String, i As Integer
             ReDim tmp(sock1.Client.Available - 1)
             sock1.Client.Receive(tmp)
@@ -108,22 +140,32 @@
             For i = 0 To tmp.GetUpperBound(0)
                 data &= Hex(tmp(i))
             Next
+            My.Computer.FileSystem.WriteAllText("D:\TS_ID\debuglog.txt", Len(data), True)
+            My.Computer.FileSystem.WriteAllText("D:\TS_ID\debuglog.txt", "****", True)
             If InStr(data, "59E9AFADB9A5") Then
-                chklog = True
-                logout = False
-                ConnectStatus.Text = "登入狀態：成功登入"
+                If Len(data) > 120000 Then
+                    ConnectStatus.Text = "登入狀態：成功登入"
+                Else
+                    ConnectStatus.Text = "登入狀態：登入失敗->重新連線"
+                    sock1.Client.Disconnect(False)
+                    sock1.Close()
+                    sock1 = New Net.Sockets.TcpClient
+                    System.Threading.Thread.Sleep(5000)
+
+                    ReLogin()
+                End If
             Else
                 If InStr(data, "59E9AFADACAB") Then
-                    chklog = False
-                    logout = True
+                    'chklog = False
+                    'logout = True
                     ConnectStatus.Text = "登入狀態：帳密錯誤"
                     sock1.Client.Disconnect(False)
                     sock1.Close()
                     sock1 = New Net.Sockets.TcpClient
                 Else
                     If InStr(data, "59E9AFADAD") Then
-                        chklog = False
-                        logout = True
+                        'chklog = False
+                        'logout = True
                         Dim error_id As Integer = (Val("&h" & data.Substring(InStr(data, "59E9AFADAD") + 9, 2)) Xor 173)
                         ConnectStatus.Text = "登入狀態：錯誤" & error_id
                         sock1.Client.Disconnect(False)
@@ -132,7 +174,6 @@
                     End If
                 End If
             End If
-            'chklogin()
         End If
     End Sub
 
@@ -153,12 +194,6 @@
     End Function
 
     Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
-        If i > AcctNo_max_num Then
-            Timer1.Stop()
-        Else
-            debug_log.Text = AcctNo(NowNum.Text)
-            i += 1
-        End If
 
     End Sub
 End Class

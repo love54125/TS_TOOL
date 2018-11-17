@@ -26,7 +26,6 @@ Partial Class Form1
         Me.Button1 = New System.Windows.Forms.Button()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
-        Me.debug_log = New System.Windows.Forms.Label()
         Me.IPAddr = New System.Windows.Forms.TextBox()
         Me.NowNum = New System.Windows.Forms.TextBox()
         Me.Label2 = New System.Windows.Forms.Label()
@@ -39,6 +38,7 @@ Partial Class Form1
         Me.Label5 = New System.Windows.Forms.Label()
         Me.VersionNum = New System.Windows.Forms.TextBox()
         Me.CheckConnectStatus = New System.Windows.Forms.Timer(Me.components)
+        Me.DebugLog = New System.Windows.Forms.TextBox()
         Me.SuspendLayout()
         '
         'Button1
@@ -62,15 +62,6 @@ Partial Class Form1
         'Timer1
         '
         Me.Timer1.Interval = 1000
-        '
-        'debug_log
-        '
-        Me.debug_log.AutoSize = True
-        Me.debug_log.Location = New System.Drawing.Point(416, 24)
-        Me.debug_log.Name = "debug_log"
-        Me.debug_log.Size = New System.Drawing.Size(37, 12)
-        Me.debug_log.TabIndex = 2
-        Me.debug_log.Text = "--------"
         '
         'IPAddr
         '
@@ -175,11 +166,21 @@ Partial Class Form1
         '
         Me.CheckConnectStatus.Interval = 1000
         '
+        'DebugLog
+        '
+        Me.DebugLog.Location = New System.Drawing.Point(192, 12)
+        Me.DebugLog.Multiline = True
+        Me.DebugLog.Name = "DebugLog"
+        Me.DebugLog.ReadOnly = True
+        Me.DebugLog.Size = New System.Drawing.Size(312, 200)
+        Me.DebugLog.TabIndex = 15
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(516, 264)
+        Me.Controls.Add(Me.DebugLog)
         Me.Controls.Add(Me.VersionNum)
         Me.Controls.Add(Me.Label5)
         Me.Controls.Add(Me.VersionRegion)
@@ -191,7 +192,6 @@ Partial Class Form1
         Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.NowNum)
         Me.Controls.Add(Me.IPAddr)
-        Me.Controls.Add(Me.debug_log)
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.Button1)
         Me.Name = "Form1"
@@ -204,7 +204,6 @@ Partial Class Form1
     Friend WithEvents Button1 As Button
     Friend WithEvents Label1 As Label
     Friend WithEvents Timer1 As Timer
-    Friend WithEvents debug_log As Label
     Friend WithEvents IPAddr As TextBox
     Friend WithEvents NowNum As TextBox
     Friend WithEvents Label2 As Label
@@ -217,4 +216,5 @@ Partial Class Form1
     Friend WithEvents Label5 As Label
     Friend WithEvents VersionNum As TextBox
     Friend WithEvents CheckConnectStatus As Timer
+    Friend WithEvents DebugLog As TextBox
 End Class
