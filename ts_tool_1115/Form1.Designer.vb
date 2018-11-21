@@ -25,7 +25,7 @@ Partial Class Form1
         Me.components = New System.ComponentModel.Container()
         Me.Button1 = New System.Windows.Forms.Button()
         Me.Label1 = New System.Windows.Forms.Label()
-        Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
+        Me.MainCtrl = New System.Windows.Forms.Timer(Me.components)
         Me.IPAddr = New System.Windows.Forms.TextBox()
         Me.NowNum = New System.Windows.Forms.TextBox()
         Me.Label2 = New System.Windows.Forms.Label()
@@ -39,6 +39,7 @@ Partial Class Form1
         Me.VersionNum = New System.Windows.Forms.TextBox()
         Me.CheckConnectStatus = New System.Windows.Forms.Timer(Me.components)
         Me.DebugLog = New System.Windows.Forms.TextBox()
+        Me.CheckGo12001 = New System.Windows.Forms.CheckBox()
         Me.SuspendLayout()
         '
         'Button1
@@ -59,9 +60,9 @@ Partial Class Form1
         Me.Label1.TabIndex = 1
         Me.Label1.Text = "Server IP"
         '
-        'Timer1
+        'MainCtrl
         '
-        Me.Timer1.Interval = 1000
+        Me.MainCtrl.Interval = 1000
         '
         'IPAddr
         '
@@ -123,7 +124,7 @@ Partial Class Form1
         Me.TSPassWord.Name = "TSPassWord"
         Me.TSPassWord.Size = New System.Drawing.Size(100, 22)
         Me.TSPassWord.TabIndex = 10
-        Me.TSPassWord.Text = "123456"
+        Me.TSPassWord.Text = "tt12355"
         Me.TSPassWord.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
         'Label4
@@ -172,14 +173,26 @@ Partial Class Form1
         Me.DebugLog.Multiline = True
         Me.DebugLog.Name = "DebugLog"
         Me.DebugLog.ReadOnly = True
+        Me.DebugLog.ScrollBars = System.Windows.Forms.ScrollBars.Both
         Me.DebugLog.Size = New System.Drawing.Size(312, 200)
         Me.DebugLog.TabIndex = 15
+        '
+        'CheckGo12001
+        '
+        Me.CheckGo12001.AutoSize = True
+        Me.CheckGo12001.Location = New System.Drawing.Point(648, 12)
+        Me.CheckGo12001.Name = "CheckGo12001"
+        Me.CheckGo12001.Size = New System.Drawing.Size(108, 16)
+        Me.CheckGo12001.TabIndex = 16
+        Me.CheckGo12001.Text = "機關盒飛新手城"
+        Me.CheckGo12001.UseVisualStyleBackColor = True
         '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(516, 264)
+        Me.ClientSize = New System.Drawing.Size(768, 414)
+        Me.Controls.Add(Me.CheckGo12001)
         Me.Controls.Add(Me.DebugLog)
         Me.Controls.Add(Me.VersionNum)
         Me.Controls.Add(Me.Label5)
@@ -203,7 +216,7 @@ Partial Class Form1
 
     Friend WithEvents Button1 As Button
     Friend WithEvents Label1 As Label
-    Friend WithEvents Timer1 As Timer
+    Friend WithEvents MainCtrl As Timer
     Friend WithEvents IPAddr As TextBox
     Friend WithEvents NowNum As TextBox
     Friend WithEvents Label2 As Label
@@ -217,4 +230,5 @@ Partial Class Form1
     Friend WithEvents VersionNum As TextBox
     Friend WithEvents CheckConnectStatus As Timer
     Friend WithEvents DebugLog As TextBox
+    Friend WithEvents CheckGo12001 As System.Windows.Forms.CheckBox
 End Class
