@@ -12,18 +12,19 @@
     Dim ip As String
     Dim strbuff As String
     Dim NowState As String = "done"
+    Dim lastState As String = ""
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         'IPAddr.Text = "210.242.243.31"
         ip = IPAddr.Text
-        AcctNo = Split(My.Computer.FileSystem.ReadAllText("D:\TS_ID\AA+BB+CC+DD.txt", System.Text.Encoding.Default), ",")
+        AcctNo = Split(My.Computer.FileSystem.ReadAllText("D:\TS_ID\AA.txt", System.Text.Encoding.Default), ",")
         AcctNo_max_num = UBound(AcctNo)
         MainCtrl.Start()
+        MainCtrl.Interval = FunctionTimer.Value
 
     End Sub
 
-    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
-
+    Sub ConnectFunction()
         If NowNum.Text = "" Then
             MsgBox("請輸入開始號碼", 48)
             NowNum.Focus()
@@ -55,18 +56,22 @@
             Button1.Text = "登出"
             Login()
             CheckConnectStatus.Start()
-            NowState = "done"
             chklog = True
         End If
+    End Sub
 
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
 
+        ConnectFunction()
 
         'DebugLog.Text = AcctNo(NowNum.Text)
-        MainCtrl.Interval = 100
+        'MainCtrl.Interval = 100
         'Timer1.Start()
 
         'Label1.Text = temp_max
     End Sub
+
+
 
     Sub Login()
         If sock1.Connected = False Then
@@ -199,99 +204,27 @@
         Buwei = tmp
     End Function
 
-    Sub GoTo12001()
-<<<<<<< HEAD
-
+    Function GoTo12001() As Boolean
         Dim pack() As Byte
         Dim tmp As String
         Dim i As Integer
 
-        tmp = "59E9A8ADE9AC4C83AC"
-        'GO TO 12001
-        ReDim pack(Len(tmp) \ 2 - 1)
-        For i = 0 To Len(tmp) \ 2 - 1
-            pack(i) = Val("&h" & Mid(tmp, 1 + i * 2, 2))
-        Next
         If sock1.Connected = True Then
-            sock1.Client.Send(pack)
-        End If
-    End Sub
-
-
-    Function ChechGo12001TaskDone() As Boolean
-        If sock1.Connected = True Then
-            If sock1.Client.Available = 0 Then
-                ChechGo12001TaskDone = False
-                Exit Function
-            Else
-                Dim tmp() As Byte, data As String, i As Integer
-                ReDim tmp(sock1.Client.Available - 1)
-                sock1.Client.Receive(tmp)
-                data = ""
-                For i = 0 To tmp.GetUpperBound(0)
-                    data &= Hex(tmp(i))
-                Next
-                If InStr(data, "4C83") AndAlso Len(data) < 1000 Then
-                    DebugLog.Text &= data & vbCrLf
-                    'DebugLog.Text &= "get packet" & vbCrLf
-                    ChechGo12001TaskDone = True
-
-                End If
+            tmp = "59E9A9ADB9A5ADAD"
+            'tmp = "59E9A8ADE9AC4C83AC"
+            'GO TO 12001
+            ReDim pack(Len(tmp) \ 2 - 1)
+            For i = 0 To Len(tmp) \ 2 - 1
+                pack(i) = Val("&h" & Mid(tmp, 1 + i * 2, 2))
+            Next
+            If sock1.Connected = True Then
+                sock1.Client.Send(pack)
             End If
+            GoTo12001 = True
         Else
-            
-
-            ChechGo12001TaskDone = False
-            Exit Function
+            GoTo12001 = False
         End If
-        ChechGo12001TaskDone = False
-
     End Function
-
-    Private Sub Timer1_Tick(ByVal sender As Object, ByVal e As EventArgs) Handles MainCtrl.Tick
-        'DebugLog.Text &= NowState & vbCrLf
-        DebugLog.SelectionStart = DebugLog.Text.Length
-        DebugLog.ScrollToCaret()
-        DebugLog.Refresh()
-        If sock1.Connected = True Then
-            If sock1.Client.Available = 0 Then
-                Exit Sub
-            End If
-        Else
-            Exit Sub
-        End If
-
-        Select Case NowState
-            Case "done"
-            Case "login"
-                If CheckGo12001.Checked = True Then
-                    NowState = "goto12001"
-                    Exit Sub
-                End If
-            Case "goto12001"
-                If ChechGo12001TaskDone() = False Then
-                    GoTo12001()
-                End If
-
-        End Select
-    End Sub
-
-=======
-
-        Dim pack() As Byte
-        Dim tmp As String
-        Dim i As Integer
-
-        tmp = "59E9A8ADE9AC4C83AC"
-        'GO TO 12001
-        ReDim pack(Len(tmp) \ 2 - 1)
-        For i = 0 To Len(tmp) \ 2 - 1
-            pack(i) = Val("&h" & Mid(tmp, 1 + i * 2, 2))
-        Next
-        If sock1.Connected = True Then
-            sock1.Client.Send(pack)
-        End If
-    End Sub
 
 
     Function ChechGo12001TaskDone() As Boolean
@@ -308,13 +241,13 @@
                     data &= Hex(tmp(i))
                 Next
                 If InStr(data, "4C83") AndAlso Len(data) < 120000 Then
-                    DebugLog.Text &= data & vbCrLf
-                    DebugLog.Text &= "get packet" & vbCrLf
+                    'DebugLog.Text &= data & vbCrLf
+                    'DebugLog.Text &= "get packet" & vbCrLf
+                    ChechGo12001TaskDone = True
+                    Exit Function
                 End If
             End If
         Else
-            
-
             ChechGo12001TaskDone = False
             Exit Function
         End If
@@ -322,11 +255,25 @@
 
     End Function
 
+    Sub ChangeNextID()
+        If NowNum.Text > AcctNo_max_num Then
+            NowState = "AllTaskFinish"
+        Else
+            NowNum.Text = NowNum.Text + 1
+
+        End If
+    End Sub
+
+    Sub LogoutThisID()
+        sock1.Client.Disconnect(False)
+        sock1.Close()
+        sock1 = New Net.Sockets.TcpClient
+        ConnectStatus.Text = "登入狀態：斷開連接"
+        chklog = False
+    End Sub
+
     Private Sub Timer1_Tick(ByVal sender As Object, ByVal e As EventArgs) Handles MainCtrl.Tick
-        DebugLog.Text &= NowState & vbCrLf
-        DebugLog.SelectionStart = DebugLog.Text.Length
-        DebugLog.ScrollToCaret()
-        DebugLog.Refresh()
+
         If sock1.Connected = True Then
             If sock1.Client.Available = 0 Then
                 Exit Sub
@@ -335,20 +282,42 @@
             Exit Sub
         End If
 
+        'upload state message
+        If lastState <> NowState Then
+            lastState = NowState
+            DebugLog.Text &= NowState & vbCrLf
+            DebugLog.SelectionStart = DebugLog.Text.Length
+            DebugLog.ScrollToCaret()
+            DebugLog.Refresh()
+        End If
+
+
         Select Case NowState
             Case "done"
+            Case "ThisTaskFinish"
+                LogoutThisID()
+                ChangeNextID()
+                ConnectFunction()
+                NowState = "WaitingNextConnect"
+            Case "WaitingNextConnect"
+
             Case "login"
                 If CheckGo12001.Checked = True Then
                     NowState = "goto12001"
                     Exit Sub
                 End If
+
             Case "goto12001"
-                If ChechGo12001TaskDone() = False Then
-                    GoTo12001()
+                If GoTo12001() = True Then
+                    NowState = "ThisTaskFinish"
                 End If
 
+                'If ChechGo12001TaskDone() = False Then
+                'GoTo12001()
+                'Else
+                'NowState = "ThisTaskFinish"
+                'End If
         End Select
     End Sub
 
->>>>>>> b2eda57d6c50cf2932ac0766871e2a89f7ad779b
 End Class

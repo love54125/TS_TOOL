@@ -40,6 +40,9 @@ Partial Class Form1
         Me.CheckConnectStatus = New System.Windows.Forms.Timer(Me.components)
         Me.DebugLog = New System.Windows.Forms.TextBox()
         Me.CheckGo12001 = New System.Windows.Forms.CheckBox()
+        Me.FunctionTimer = New System.Windows.Forms.NumericUpDown()
+        Me.Label6 = New System.Windows.Forms.Label()
+        CType(Me.FunctionTimer, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Button1
@@ -187,11 +190,32 @@ Partial Class Form1
         Me.CheckGo12001.Text = "機關盒飛新手城"
         Me.CheckGo12001.UseVisualStyleBackColor = True
         '
+        'FunctionTimer
+        '
+        Me.FunctionTimer.Location = New System.Drawing.Point(122, 137)
+        Me.FunctionTimer.Maximum = New Decimal(New Integer() {1000, 0, 0, 0})
+        Me.FunctionTimer.Minimum = New Decimal(New Integer() {1, 0, 0, 0})
+        Me.FunctionTimer.Name = "FunctionTimer"
+        Me.FunctionTimer.Size = New System.Drawing.Size(49, 22)
+        Me.FunctionTimer.TabIndex = 17
+        Me.FunctionTimer.Value = New Decimal(New Integer() {1, 0, 0, 0})
+        '
+        'Label6
+        '
+        Me.Label6.AutoSize = True
+        Me.Label6.Location = New System.Drawing.Point(12, 139)
+        Me.Label6.Name = "Label6"
+        Me.Label6.Size = New System.Drawing.Size(104, 12)
+        Me.Label6.TabIndex = 18
+        Me.Label6.Text = "延遲時間(最低1ms)"
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(768, 414)
+        Me.Controls.Add(Me.Label6)
+        Me.Controls.Add(Me.FunctionTimer)
         Me.Controls.Add(Me.CheckGo12001)
         Me.Controls.Add(Me.DebugLog)
         Me.Controls.Add(Me.VersionNum)
@@ -209,6 +233,7 @@ Partial Class Form1
         Me.Controls.Add(Me.Button1)
         Me.Name = "Form1"
         Me.Text = "秋風老王吃大便"
+        CType(Me.FunctionTimer, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -231,4 +256,6 @@ Partial Class Form1
     Friend WithEvents CheckConnectStatus As Timer
     Friend WithEvents DebugLog As TextBox
     Friend WithEvents CheckGo12001 As System.Windows.Forms.CheckBox
+    Friend WithEvents FunctionTimer As NumericUpDown
+    Friend WithEvents Label6 As Label
 End Class
